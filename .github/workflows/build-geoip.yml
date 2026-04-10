@@ -1,0 +1,80 @@
+name: Build geoip.dat
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "23 2 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Checkout runetfreedom/geoip builder
+        uses: actions/checkout@v4
+        with:
+          repository: runetfreedom/geoip
+          path: geoip
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: ./geoip/go.mod
+
+      - name: Set build variables
+        run: |
+          echo "TAG_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+          echo "RELEASE_NAME=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+
+      - name: Build geoip builder
+        run: go build -C geoip ./
+
+      - name: Generate geoip files
+        run: ./geoip/geoip convert -c ./config.json
+
+      - name: Generate sha256 checksum
+        run: |
+          cd output
+          sha256sum geoip.dat > geoip.dat.sha256
+
+      - name: Commit config changes to main
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add config.json
+          git diff --cached --quiet || git commit -m "chore: update geoip config"
+          git push
+
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          ref: release
+          path: release-branch
+
+      - name: Publish files to release branch
+        run: |
+          find release-branch -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          cp output/geoip.dat release-branch/geoip.dat
+          cp output/geoip.dat.sha256 release-branch/geoip.dat.sha256
+
+          cd release-branch
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add geoip.dat geoip.dat.sha256
+          git commit -m "chore: publish latest geoip.dat" || echo "No changes to commit"
+          git push
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: geoip-dat
+          path: |
+            output/geoip.dat
+            output/geoip.dat.sha256
