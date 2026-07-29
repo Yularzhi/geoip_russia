@@ -61,6 +61,9 @@ jobs:
           (cd sing-box/rule-set-geoip && zip -r ../../sing-box-rule-set-geoip.zip . >/dev/null)
           sha256sum sing-box-rule-set-geoip.zip > sing-box-rule-set-geoip.zip.sha256
 
+      - name: Set release date
+        run: echo "BUILD_DATE=$(date -u +%F)" >> "$GITHUB_ENV"
+
       - name: Commit config changes to main
         run: |
           git config user.name "github-actions"
@@ -101,7 +104,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: GeoIP build #${{ github.run_number }}
+          name: GeoIP build ${{ env.BUILD_DATE }}
           body: |
             Automated latest build of geoip.dat and sing-box rule sets
 
