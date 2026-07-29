@@ -34,17 +34,29 @@
 
 ### Sing-box
 
-`https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs`
-
-Архив:
+Архив со всеми файлами:
 
 `https://github.com/yularzhi/geoip_russia/releases/latest/download/sing-box-rule-set-geoip.zip`
 
-Контрольная сумма:
+Файлы:
 
-`https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs.sha256`
-
-`https://github.com/yularzhi/geoip_russia/releases/latest/download/sing-box-rule-set-geoip.zip.sha256`
+| Категория | Raw-ссылка |
+| --- | --- |
+| `ru-blocked` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs` |
+| `ru-whitelist` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru-whitelist.srs` |
+| `cloudflare` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-cloudflare.srs` |
+| `cloudfront` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-cloudfront.srs` |
+| `facebook` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-facebook.srs` |
+| `fastly` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-fastly.srs` |
+| `google` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-google.srs` |
+| `netflix` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-netflix.srs` |
+| `telegram` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-telegram.srs` |
+| `viber` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-viber.srs` |
+| `twitter` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-twitter.srs` |
+| `ddos-guard` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ddos-guard.srs` |
+| `yandex` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-yandex.srs` |
+| `ru` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru.srs` |
+| `private` | `https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-private.srs` |
 
 ## ⚙️ Использование
 
