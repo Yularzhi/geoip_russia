@@ -25,6 +25,12 @@ jobs:
           repository: runetfreedom/geoip
           path: geoip
 
+      - name: Checkout runetfreedom/geodat2srs converter
+        uses: actions/checkout@v4
+        with:
+          repository: runetfreedom/geodat2srs
+          path: geodat2srs
+
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
@@ -33,13 +39,24 @@ jobs:
       - name: Build geoip builder
         run: go build -C geoip ./
 
+      - name: Build geodat2srs converter
+        run: go build -C geodat2srs ./
+
       - name: Generate geoip files
         run: ./geoip/geoip convert -c ./config.json
+
+      - name: Generate sing-box rule sets
+        run: ./geodat2srs/geodat2srs geoip -i ./output/geoip.dat -o ./output/sing-box/rule-set-geoip --prefix geoip-
 
       - name: Generate sha256 checksum
         run: |
           cd output
           sha256sum geoip.dat > geoip.dat.sha256
+          find sing-box/rule-set-geoip -name '*.srs' -type f -print0 | while IFS= read -r -d '' file; do
+            sha256sum "$file" > "$file.sha256"
+          done
+          (cd sing-box/rule-set-geoip && zip -r ../../sing-box-rule-set-geoip.zip . >/dev/null)
+          sha256sum sing-box-rule-set-geoip.zip > sing-box-rule-set-geoip.zip.sha256
 
       - name: Commit config changes to main
         run: |
@@ -60,6 +77,10 @@ jobs:
           find release-branch -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
           cp output/geoip.dat release-branch/geoip.dat
           cp output/geoip.dat.sha256 release-branch/geoip.dat.sha256
+          mkdir -p release-branch/sing-box
+          cp -R output/sing-box/. release-branch/sing-box/
+          cp output/sing-box-rule-set-geoip.zip release-branch/sing-box-rule-set-geoip.zip
+          cp output/sing-box-rule-set-geoip.zip.sha256 release-branch/sing-box-rule-set-geoip.zip.sha256
 
           cd release-branch
           git config user.name "github-actions"
@@ -81,6 +102,14 @@ jobs:
           gh release delete-asset "${RELEASE_TAG}" geoip.dat -y || true
           gh release view "${RELEASE_TAG}" >/dev/null 2>&1 && \
           gh release delete-asset "${RELEASE_TAG}" geoip.dat.sha256 -y || true
+          gh release view "${RELEASE_TAG}" --json assets --jq '.assets[].name' 2>/dev/null | while read -r asset; do
+            case "$asset" in
+              geoip-*.srs) gh release delete-asset "${RELEASE_TAG}" "$asset" -y || true ;;
+              geoip-*.srs.sha256) gh release delete-asset "${RELEASE_TAG}" "$asset" -y || true ;;
+              sing-box-rule-set-geoip.zip) gh release delete-asset "${RELEASE_TAG}" "$asset" -y || true ;;
+              sing-box-rule-set-geoip.zip.sha256) gh release delete-asset "${RELEASE_TAG}" "$asset" -y || true ;;
+            esac
+          done
 
       - name: Create or update GitHub Release
         uses: softprops/action-gh-release@v2
@@ -88,13 +117,23 @@ jobs:
           tag_name: ${{ env.RELEASE_TAG }}
           name: Latest geoip.dat
           body: |
-            Automated latest build of geoip.dat
+            Automated latest build of geoip.dat and sing-box rule sets
 
-            Raw URL:
+            GeoIP:
             https://raw.githubusercontent.com/yularzhi/geoip_russia/release/geoip.dat
+
+            Sing-box:
+            https://raw.githubusercontent.com/yularzhi/geoip_russia/release/sing-box/rule-set-geoip/geoip-ru-blocked.srs
+
+            Sing-box archive:
+            https://github.com/yularzhi/geoip_russia/releases/download/latest-geoip/sing-box-rule-set-geoip.zip
           files: |
             output/geoip.dat
             output/geoip.dat.sha256
+            output/sing-box/rule-set-geoip/*.srs
+            output/sing-box/rule-set-geoip/*.srs.sha256
+            output/sing-box-rule-set-geoip.zip
+            output/sing-box-rule-set-geoip.zip.sha256
           make_latest: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -102,7 +141,11 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: geoip-dat
+          name: geoip-and-sing-box
           path: |
             output/geoip.dat
             output/geoip.dat.sha256
+            output/sing-box/rule-set-geoip/*.srs
+            output/sing-box/rule-set-geoip/*.srs.sha256
+            output/sing-box-rule-set-geoip.zip
+            output/sing-box-rule-set-geoip.zip.sha256
