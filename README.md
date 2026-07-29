@@ -26,25 +26,25 @@
 
 ### GeoIP
 
-`https://raw.githubusercontent.com/yularzhi/geoip_russia/release/geoip.dat`
+`https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip.dat`
 
 Контрольная сумма:
 
-`https://raw.githubusercontent.com/yularzhi/geoip_russia/release/geoip.dat.sha256`
+`https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip.dat.sha256`
 
 ### Sing-box
 
-`https://raw.githubusercontent.com/yularzhi/geoip_russia/release/sing-box/rule-set-geoip/geoip-ru-blocked.srs`
+`https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs`
 
 Архив:
 
-`https://github.com/yularzhi/geoip_russia/releases/download/latest-geoip/sing-box-rule-set-geoip.zip`
+`https://github.com/yularzhi/geoip_russia/releases/latest/download/sing-box-rule-set-geoip.zip`
 
 Контрольная сумма:
 
-`https://raw.githubusercontent.com/yularzhi/geoip_russia/release/sing-box/rule-set-geoip/geoip-ru-blocked.srs.sha256`
+`https://github.com/yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs.sha256`
 
-`https://github.com/yularzhi/geoip_russia/releases/download/latest-geoip/sing-box-rule-set-geoip.zip.sha256`
+`https://github.com/yularzhi/geoip_russia/releases/latest/download/sing-box-rule-set-geoip.zip.sha256`
 
 ## ⚙️ Использование
 
