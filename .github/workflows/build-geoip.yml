@@ -14,13 +14,11 @@ jobs:
     permissions:
       contents: write
     env:
-      RELEASE_TAG: release-${{ github.run_id }}-${{ github.run_attempt }}
+      RELEASE_TAG: latest
 
     steps:
       - name: Checkout this repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Checkout runetfreedom/geoip builder
         uses: actions/checkout@v4
@@ -38,6 +36,9 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version-file: ./geoip/go.mod
+          cache-dependency-path: |
+            geoip/go.sum
+            geodat2srs/go.sum
 
       - name: Build geoip builder
         run: go build -C geoip ./
@@ -64,14 +65,6 @@ jobs:
       - name: Set release date
         run: echo "BUILD_DATE=$(date -u +%F)" >> "$GITHUB_ENV"
 
-      - name: Commit config changes to main
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git add config.json
-          git diff --cached --quiet || git commit -m "chore: update geoip config"
-          git push
-
       - name: Checkout release branch
         uses: actions/checkout@v4
         with:
@@ -97,8 +90,8 @@ jobs:
 
       - name: Create release tag
         run: |
-          git tag "${RELEASE_TAG}"
-          git push origin "refs/tags/${RELEASE_TAG}"
+          git tag -f "${RELEASE_TAG}"
+          git push -f origin "refs/tags/${RELEASE_TAG}"
 
       - name: Create or update GitHub Release
         uses: softprops/action-gh-release@v2

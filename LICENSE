@@ -1,0 +1,58 @@
+The MIT License (MIT)
+
+Copyright (c) 2026 Yularzhi
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---------------------------------------------------------------------------
+
+THIRD-PARTY DATA AND CODE ATTRIBUTION
+
+This repository aggregates data and tools from the following sources.
+Their licenses and terms of use apply to the respective data and code:
+
+1. antifilter.download (https://antifilter.download)
+   - Used for: `ru-blocked` category (blocked subnets/IPs in Russia).
+   - Data is provided by the antifilter project; check the site for terms.
+
+2. hxehex/russia-mobile-internet-whitelist
+   (https://github.com/hxehex/russia-mobile-internet-whitelist)
+   - Used for: `ru-whitelist` category.
+   - Subject to that repository's license.
+
+3. Loyalsoldier/geoip (https://github.com/Loyalsoldier/geoip)
+   - Used for: base categories (cloudflare, cloudfront, facebook, fastly,
+     google, netflix, telegram, twitter, ru) and GeoLite2-ASN CSV files.
+   - Licensed under its repository license.
+
+4. MaxMind GeoLite2 ASN (via Loyalsoldier CSV mirrors)
+   - Used for: `ddos-guard` and `yandex` categories (ASN-based).
+   - GeoLite2 data is licensed under the Creative Commons
+     Attribution-ShareAlike 4.0 International License and the GeoLite2
+     End User License Agreement:
+     https://www.maxmind.com/en/geolite2/eula
+     https://creativecommons.org/licenses/by-sa/4.0/
+
+5. runetfreedom/geoip (https://github.com/runetfreedom/geoip)
+   runetfreedom/geodat2srs (https://github.com/runetfreedom/geodat2srs)
+   v2fly/geoip (https://github.com/v2fly/geoip)
+   - Used for: build toolchain and GeoIP format ecosystem.
+   - Each is subject to its own repository license (GPL-3.0 for v2fly/geoip
+     and runetfreedom projects — build tools only, their license does not
+     apply to the data output of this repository).

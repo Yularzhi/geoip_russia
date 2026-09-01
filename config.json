@@ -24,7 +24,7 @@
       }
     },
     {
-      "type":  "text",
+      "type": "text",
       "action": "add",
       "args": {
         "name": "ru-whitelist",
@@ -32,11 +32,11 @@
       }
     },
     {
-     "type": "text",
+      "type": "text",
       "action": "add",
       "args": {
-      "name": "viber",
-      "uri": "./Data/viber.txt"
+        "name": "viber",
+        "uri": "./Data/viber.txt"
       }
     },
     {

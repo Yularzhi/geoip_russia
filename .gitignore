@@ -1,0 +1,7 @@
+output/
+release-artifacts/
+*.dat
+*.srs
+*.zip
+geoip/
+geodat2srs/
