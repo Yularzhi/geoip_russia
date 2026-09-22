@@ -8,6 +8,14 @@
 
 Репозиторий автоматически (ежедневно) собирает и публикует набор GeoIP-категорий, полезных для маршрутизации и обхода блокировок в России.
 
+## Быстрые ссылки
+
+- **Главный файл GeoIP:** <https://raw.githubusercontent.com/Yularzhi/geoip_russia/release/geoip.dat>
+- **Контрольная сумма:** <https://raw.githubusercontent.com/Yularzhi/geoip_russia/release/geoip.dat.sha256>
+- **Связанный проект GeoSite:** <https://github.com/Yularzhi/geosite_russia>
+
+Основной файл доступен через raw-ссылку на ветку `release`. После публикации новой сборки CDN GitHub может обновлять содержимое с небольшой задержкой.
+
 ## 📦 Состав
 
 В итоговом `geoip.dat` и sing-box rule-set входят следующие категории:
@@ -47,7 +55,7 @@ https://github.com/Yularzhi/geoip_russia/releases/latest/download/sing-box-rule-
 
 Файлы:
 
-| Категория | Raw-ссылка |
+| Категория | Ссылка на скачивание |
 | --- | --- |
 | `ru-blocked` | `https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs` |
 | `ru-whitelist` | `https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru-whitelist.srs` |
@@ -150,6 +158,10 @@ https://github.com/Yularzhi/geoip_russia/releases/latest/download/sing-box-rule-
 ## 📄 Лицензия
 
 См. [LICENSE](LICENSE). Репозиторий агрегирует данные из сторонних источников — условия их использования также описаны в LICENSE.
+
+## 🔗 Связанный проект
+
+Доменные категории для совместной маршрутизации публикуются в проекте [`geosite_russia`](https://github.com/Yularzhi/geosite_russia). Используйте `geoip_russia` для IP/CIDR-правил, а `geosite_russia` — для доменных правил.
 
 ## 💬 Обратная связь
 

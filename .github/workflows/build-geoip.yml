@@ -8,9 +8,14 @@ on:
   schedule:
     - cron: "23 2 * * *"
 
+concurrency:
+  group: geoip-build
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: write
     env:
@@ -54,13 +59,28 @@ jobs:
 
       - name: Generate sha256 checksum
         run: |
+          set -euo pipefail
           cd output
           sha256sum geoip.dat > geoip.dat.sha256
-          find sing-box/rule-set-geoip -name '*.srs' -type f -print0 | while IFS= read -r -d '' file; do
-            sha256sum "$file" > "$file.sha256"
+          find sing-box/rule-set-geoip -maxdepth 1 -name '*.srs' -type f -print0 | while IFS= read -r -d '' file; do
+            (cd "$(dirname "$file")" && sha256sum "$(basename "$file")" > "$(basename "$file").sha256")
           done
           (cd sing-box/rule-set-geoip && zip -r ../../sing-box-rule-set-geoip.zip . >/dev/null)
           sha256sum sing-box-rule-set-geoip.zip > sing-box-rule-set-geoip.zip.sha256
+
+      - name: Verify generated files
+        run: |
+          set -euo pipefail
+          test -s output/geoip.dat
+          test -s output/geoip.dat.sha256
+          (cd output && sha256sum -c geoip.dat.sha256)
+          expected_lists="$(jq -r '[.output[] | select(.type == "v2rayGeoIPDat") | .args.wantedList[]] | unique[]' config.json)"
+          for list in $expected_lists; do
+            test -s "output/sing-box/rule-set-geoip/geoip-${list}.srs"
+            (cd output/sing-box/rule-set-geoip && sha256sum -c "geoip-${list}.srs.sha256")
+          done
+          test -s output/sing-box-rule-set-geoip.zip
+          (cd output && sha256sum -c sing-box-rule-set-geoip.zip.sha256)
 
       - name: Set release date
         run: echo "BUILD_DATE=$(date -u +%F)" >> "$GITHUB_ENV"
@@ -85,8 +105,12 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add -A
-          git commit -m "chore: publish latest geoip.dat" || echo "No changes to commit"
-          git push
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: publish latest geoip.dat"
+            git push
+          fi
 
       - name: Create release tag
         run: |
