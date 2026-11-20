@@ -3,8 +3,15 @@
 [![Build geoip.dat](https://github.com/Yularzhi/geoip_russia/actions/workflows/build-geoip.yml/badge.svg)](https://github.com/Yularzhi/geoip_russia/actions/workflows/build-geoip.yml)
 [![Latest Release](https://img.shields.io/github/v/release/Yularzhi/geoip_russia)](https://github.com/Yularzhi/geoip_russia/releases/latest)
 [![Last Commit](https://img.shields.io/github/last-commit/Yularzhi/geoip_russia)](https://github.com/Yularzhi/geoip_russia/commits/main)
+[![Related GeoSite](https://img.shields.io/badge/related-geosite__russia-blue)](https://github.com/Yularzhi/geosite_russia)
 
 Кастомный `geoip.dat` и `sing-box` rule-set для Xray / v2fly / Sing-box / Happ и других клиентов.
+
+> 💡 **Экосистема маршрутизации:**
+> - 📍 **[geoip_russia](https://github.com/Yularzhi/geoip_russia)** (этот репозиторий) — фильтрация по IP-адресам, CIDR-подсетям и ASN (заблокированные IP, whitelist мобильных сетей РФ, Telegram, Cloudflare и др.).
+> - 🌐 **[geosite_russia](https://github.com/Yularzhi/geosite_russia)** — фильтрация по доменам, FQDN и сервисам (обход блокировок, защита от блокировки рекламой, российские ресурсы).
+> 
+> Рекомендуется использовать оба проекта вместе для построения полноценного сплит-туннеля.
 
 Репозиторий автоматически (ежедневно) собирает и публикует набор GeoIP-категорий, полезных для маршрутизации и обхода блокировок в России.
 
@@ -12,7 +19,7 @@
 
 - **Главный файл GeoIP:** <https://raw.githubusercontent.com/Yularzhi/geoip_russia/release/geoip.dat>
 - **Контрольная сумма:** <https://raw.githubusercontent.com/Yularzhi/geoip_russia/release/geoip.dat.sha256>
-- **Связанный проект GeoSite:** <https://github.com/Yularzhi/geosite_russia>
+- **Связанный проект GeoSite:** <https://github.com/Yularzhi/geosite_russia> (база доменов `geosite.dat` и `.srs` rule-sets)
 
 Основной файл доступен через raw-ссылку на ветку `release`. После публикации новой сборки CDN GitHub может обновлять содержимое с небольшой задержкой.
 
@@ -73,22 +80,49 @@ https://github.com/Yularzhi/geoip_russia/releases/latest/download/sing-box-rule-
 | `ru` | `https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru.srs` |
 | `private` | `https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-private.srs` |
 
-## ⚙️ Использование
+## ⚙️ Использование в связке с [geosite_russia](https://github.com/Yularzhi/geosite_russia)
 
 ### Xray / V2Ray
 
-Пример тегов в конфиге:
+Для максимальной надежности обхода блокировок и работы российских ресурсов комбинируйте правила `geoip` и `geosite`:
 
 ```json
 {
-  "type": "field",
-  "outboundTag": "proxy",
-  "domain": ["geosite:category-ru"],
-  "ip": [
-    "geoip:ru-blocked",
-    "geoip:telegram",
-    "geoip:cloudflare"
-  ]
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "domain": ["geosite:category-ads-all"],
+        "outboundTag": "block"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:category-ru",
+          "geosite:apple",
+          "geosite:private"
+        ],
+        "ip": [
+          "geoip:ru",
+          "geoip:ru-whitelist",
+          "geoip:private"
+        ],
+        "outboundTag": "direct"
+      },
+      {
+        "type": "field",
+        "domain": [
+          "geosite:ru-blocked",
+          "geosite:telegram"
+        ],
+        "ip": [
+          "geoip:ru-blocked",
+          "geoip:telegram"
+        ],
+        "outboundTag": "proxy"
+      }
+    ]
+  }
 }
 ```
 
@@ -98,28 +132,55 @@ https://github.com/Yularzhi/geoip_russia/releases/latest/download/sing-box-rule-
 
 ### Sing-box
 
+Пример настройки маршрутизации с удаленными `.srs` правилами из обоих репозиториев:
+
 ```json
 {
   "route": {
     "rule_set": [
       {
         "type": "remote",
-        "tag": "geoip-ru-blocked",
+        "tag": "geosite-category-ru",
         "format": "binary",
-        "url": "https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs",
+        "url": "https://raw.githubusercontent.com/yularzhi/geosite_russia/release/sing-box/category-ru.srs",
         "download_detour": "direct"
       },
       {
         "type": "remote",
-        "tag": "geoip-telegram",
+        "tag": "geoip-ru",
         "format": "binary",
-        "url": "https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-telegram.srs",
+        "url": "https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru.srs",
         "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "geoip-ru-whitelist",
+        "format": "binary",
+        "url": "https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru-whitelist.srs",
+        "download_detour": "direct"
+      },
+      {
+        "type": "remote",
+        "tag": "geosite-ru-blocked",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/yularzhi/geosite_russia/release/sing-box/ru-blocked.srs",
+        "download_detour": "proxy"
+      },
+      {
+        "type": "remote",
+        "tag": "geoip-ru-blocked",
+        "format": "binary",
+        "url": "https://github.com/Yularzhi/geoip_russia/releases/latest/download/geoip-ru-blocked.srs",
+        "download_detour": "proxy"
       }
     ],
     "rules": [
       {
-        "rule_set": ["geoip-ru-blocked", "geoip-telegram"],
+        "rule_set": ["geosite-category-ru", "geoip-ru", "geoip-ru-whitelist"],
+        "outbound": "direct"
+      },
+      {
+        "rule_set": ["geosite-ru-blocked", "geoip-ru-blocked"],
         "outbound": "proxy"
       }
     ]
